@@ -1,43 +1,35 @@
 # Discord-Bot-1.0
-A Python Discord bot that shares memes on command, using the Discord API to respond to users and keep the server fun and interactive
 
-import discord
-import requests
-import json
+# Overview
 
-# your meme function
-def get_meme():
-    response = requests.get('https://meme-api.com/gimme')
-    json_data = json.loads(response.text)
-    return json_data['url']
+I built this project to learn how to work with the Discord API and external REST APIs using Python. The point of this project was to create a simple bot that listens to user commands with either a greeting or a random meme
 
-intents = discord.Intents.default()
-intents.message_content = True
+# How it works
 
-client = discord.Client(intents=intents)
+The bot first starts by connecting to Discord using the 'discord.py' library. Once it's connected its continuously listens for messages sent in the server. Whenever a new message is sent, the bot actively checks if the message comes from itself. This happens because it prevents the bot from responding to its own messages and creating an infinite response loop.
 
-@client.event
-async def on_ready():
-    print(f'Logged in as {client.user}!')
+From there, the bot looks for supported commands:
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+-If a user enters "$hello" the bot responds with a greeting.
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello World!')
+-If a user enters "$meme" the bot calls the get_meme() function.
 
-    if message.content.startswith('$meme'):
-        meme_url = get_meme()
-        await message.channel.send(meme_url)
+The "get_meme()" Function sends an HTTP GET request to the Meme Api. The api then returns a JSON object having infromation about a random meme. The function only extracts the image URL and returns it, and then the bot posts that URL directly into the Discord channel for users to view.
 
-client.run('Bot Token Here')
+# Why I used this approach
 
-import requests
-import json
+The get_meme function helps keep the code organized instead of putting everything into one place. The function is responsible for getting the meme, while the rest of the bot handles the user commands. This makes it easier for me to update the bot or if I wanted to add more APIs.
 
-def get_meme():
-  response = requests.get('https://meme-api.com/gimme')
-  json_data = json.loads(response.text)
-  return json_data['url']
+I also used the discord event systems because it lets the bot respond whenever a new message is sent. This helps prevent the bot from always checking for messages.
+
+# What I learned
+
+-Building applications with the Discord API
+
+-Making HTTP requests to external APIs
+
+-Event-driven programming
+
+-Processing JSON responses
+
+#
